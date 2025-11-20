@@ -14,18 +14,18 @@ Avila Math is an **open source project** released under MIT OR Apache-2.0 licens
 
 ### What We DO Provide
 
-✅ **Bug Reports**: We review and address confirmed bugs when time permits  
-✅ **Feature Requests**: We consider new features based on project goals  
-✅ **Pull Requests**: We review contributions (see CLA.md)  
-✅ **Documentation**: We maintain up-to-date documentation  
+✅ **Bug Reports**: We review and address confirmed bugs when time permits
+✅ **Feature Requests**: We consider new features based on project goals
+✅ **Pull Requests**: We review contributions (see CLA.md)
+✅ **Documentation**: We maintain up-to-date documentation
 
 ### What We DO NOT Provide
 
-❌ **Guaranteed Response Time**: Maintainers contribute in their free time  
-❌ **Commercial Support**: No SLA or guaranteed support contracts  
-❌ **Custom Development**: We don't implement features on demand  
-❌ **Production Support**: We are not responsible for issues in your deployment  
-❌ **Backwards Compatibility Guarantees**: Pre-1.0 releases may have breaking changes  
+❌ **Guaranteed Response Time**: Maintainers contribute in their free time
+❌ **Commercial Support**: No SLA or guaranteed support contracts
+❌ **Custom Development**: We don't implement features on demand
+❌ **Production Support**: We are not responsible for issues in your deployment
+❌ **Backwards Compatibility Guarantees**: Pre-1.0 releases may have breaking changes
 
 ### Getting Help
 

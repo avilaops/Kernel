@@ -1,4 +1,4 @@
-use kernel_math::memory::*;
+use avila_math::memory::*;
 
 #[test]
 fn test_arena_basic_usage() {

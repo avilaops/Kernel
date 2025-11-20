@@ -1,22 +1,116 @@
-# Avila Math - Infrastructure Library
+# Avila - Infrastructure Framework
 
-High-performance infrastructure library providing 3D math, memory management, OS abstractions, and windowing system for game development and graphics applications.
+Modular infrastructure framework for high-performance game development and graphics applications.
 
-## ⚠️ Important Notice
+## 📦 Workspace Structure
 
-This library provides different levels of production-readiness:
+This repository contains multiple crates organized as a Cargo workspace:
 
-**✅ Production Ready:**
-- **Math 3D** (Vec3, Vec4, Mat4, Quat, Aabb) - Fully tested, zero dependencies, battle-tested algorithms
-- **Memory Management** (Arena, Pool, Stack) - Production-quality allocators with comprehensive testing
+### [`avila-math`](avila-math/) - Math & Core Infrastructure
+High-performance 3D math, memory management, OS abstractions, and windowing system.
 
-**⚙️ Abstraction Layer (std wrappers):**
-- **OS Abstractions** (Threading, Filesystem, Clock, Network) - Thin wrappers over Rust std library for cross-platform compatibility. These are convenience abstractions, not replacements for std.
+**Production Ready:**
+- **Math 3D** (Vec3, Vec4, Mat4, Quat, Aabb) - ✅ 97 tests passing
+- **Memory Management** (Arena, Pool, Stack) - ✅ Production-quality allocators
 
-**🚧 Stub/Prototype (not for production):**
-- **Window System** (Window, Events, Input) - API design and event system only. This is a **stub/abstraction layer** without native implementation. For production use, consider established libraries like [winit](https://github.com/rust-windowing/winit) or [SDL2](https://github.com/Rust-SDL2/rust-sdl2).
+**Abstraction Layers:**
+- **OS Abstractions** (Threading, Filesystem, Clock, Network) - ⚙️ std wrappers
+- **Window System** (Events, Input) - 🚧 Stub/prototype (use winit/SDL2 for production)
 
-Similar to how libraries like [glam](https://github.com/bitshifter/glam-rs) focuses on math and [bumpalo](https://github.com/fitzgen/bumpalo) focuses on arena allocation, Avila Math provides foundational building blocks. The window system serves as an API reference for integrating with production-ready windowing libraries.
+### [`avila-renderer`](avila-renderer/) - Graphics Engine
+Modern graphics API abstraction with backend-agnostic rendering.
+
+**Current State:**
+- **GPU Abstraction API** - ✅ Complete (textures, buffers, pipelines, commands)
+- **Frame Graph System** - ✅ Automatic resource management
+- **Backend Implementation** - 🚧 Stubs (Vulkan/D3D12/Metal planned)
+
+## Quick Start
+
+```toml
+# Use math and memory only
+[dependencies]
+avila-math = "0.1.0"
+
+# Use renderer (when backends are ready)
+[dependencies]
+avila-math = "0.1.0"
+avila-renderer = "0.1.0"
+```
+
+```rust
+// Math example
+use avila_math::{Vec3, Mat4, Quat};
+
+let v = Vec3::new(1.0, 2.0, 3.0);
+let m = Mat4::from_rotation_y(std::f32::consts::PI / 2.0);
+let transformed = m.transform_point(v);
+
+// Renderer example (future)
+use avila_renderer::gfx::*;
+
+let mut device = create_device(RendererConfig::default());
+let texture = device.create_texture(&TextureDesc::new_2d(
+    1280, 720, TextureFormat::Rgba8, TextureUsage::COLOR_ATTACHMENT,
+));
+```
+
+## Repository Layout
+
+```
+Kernel/
+├── avila-math/          # Math, memory, OS, window
+│   ├── src/
+│   ├── tests/
+│   ├── examples/
+│   └── Cargo.toml
+├── avila-renderer/      # Graphics rendering
+│   ├── src/
+│   │   └── gfx/
+│   │       ├── api.rs          # Backend-agnostic GPU API
+│   │       ├── backend/        # Native API implementations
+│   │       └── framegraph.rs   # Render graph
+│   └── Cargo.toml
+├── Cargo.toml           # Workspace root
+├── LICENSE-MIT
+├── LICENSE-APACHE
+├── CLA.md
+├── CODE_OF_CONDUCT.md
+└── README.md
+```
+
+## Build & Test
+
+```bash
+# Build entire workspace
+cargo build --workspace
+
+# Build specific crate
+cargo build -p avila-math
+cargo build -p avila-renderer
+
+# Run tests
+cargo test --workspace
+
+# Run tests for specific crate
+cargo test -p avila-math
+```
+
+## Design Philosophy
+
+**Avila** follows a modular, layered architecture:
+
+1. **Foundational Layer** (`avila-math`) - Math, memory, OS abstractions
+2. **Rendering Layer** (`avila-renderer`) - Graphics API abstraction
+3. **Future Layers** - Scene management, physics, audio, networking
+
+Each layer:
+- Is **independently usable** (pick what you need)
+- Has **minimal dependencies** (prefer std over external crates)
+- Provides **type-safe abstractions** (leverage Rust's type system)
+- Maintains **zero-cost principles** (thin wrappers, compile-time optimization)
+
+Similar to how the ecosystem has specialized libraries (glam for math, wgpu for graphics), Avila provides an integrated stack optimized for game development.
 
 ## 📐 Math 3D
 
@@ -756,146 +850,124 @@ impl GameEngine {
 }
 ```
 
-## Testes
+## Documentation
 
-Execute os testes com:
+For detailed documentation on each crate:
+- [`avila-math/README.md`](avila-math/README.md) - Math, memory, OS abstractions
+- [`avila-renderer/README.md`](avila-renderer/README.md) - Rendering API and architecture
+
+## Testing
+
+**Current Status:** ✅ **97 tests passing** (avila-math)
 
 ```bash
-cargo test
+# Test all crates
+cargo test --workspace
+
+# Test with verbose output
+cargo test --workspace -- --nocapture
+
+# Test specific crate
+cargo test -p avila-math
+cargo test -p avila-renderer
 ```
 
-**Resultado:** ✅ **97 testes passando!**
-- 78 unit tests na biblioteca principal
-- 16 integration tests de memória
-- 3 doc tests
+### Coverage (avila-math)
+- ✅ Math 3D: Vec3, Vec4, Mat4, Quat, Aabb (18 tests)
+- ✅ Memory: Arena, Pool, Stack, Manager (38 tests)
+- ✅ Window System: Window, Events, Input (18 tests)
+- ✅ OS Threading: ThreadPool, Semaphore, Barriers (5 tests)
+- ✅ OS Filesystem: FileHandle, PathUtil, Read/Write (4 tests)
+- ✅ OS Clock: Timer, Stopwatch, FPS Counter, Delta Time (5 tests)
+- ✅ OS Network: TCP/UDP local, NetworkBuffer (4 tests)
+- ✅ OS System: SystemInfo, Environment, Process (4 tests)
+- ✅ Integration: Math+Memory scenarios (2 tests)
 
-### Cobertura de Testes:
-- ✅ Math 3D: Vec3, Vec4, Mat4, Quat, Aabb (18 testes)
-- ✅ Memory: Arena, Pool, Stack, Manager (38 testes)
-- ✅ Window System: Window, Events, Input (18 testes)
-- ✅ OS Threading: ThreadPool, Semaphore, Barriers (5 testes)
-- ✅ OS Filesystem: FileHandle, PathUtil, Read/Write (4 testes)
-- ✅ OS Clock: Timer, Stopwatch, FPS Counter, Delta Time (5 testes)
-- ✅ OS Network: TCP/UDP local, NetworkBuffer (4 testes)
-- ✅ OS System: SystemInfo, Environment, Process (4 testes)
-- ✅ Integration: Math+Memory scenarios (2 testes)
+## Performance Characteristics
 
-## Performance
+### Math 3D (avila-math)
+- All operations `#[inline]` for optimization
+- Uses `f32` (single precision) by default
+- Zero heap allocations for math operations
+- Column-major order for direct GPU compatibility
 
-### Math 3D
-- Todas as operações são `#[inline]` para otimização
-- Usa tipos `f32` (single precision) por padrão
-- Zero alocações de heap para operações matemáticas
-- Column-major order para compatibilidade direta com GPUs
-
-### Memory Management
-- Alocações O(1) em todos os allocators
-- Zero overhead em builds release
+### Memory Allocators (avila-math)
+- O(1) allocation/deallocation
+- Zero overhead in release builds
 - Thread-safe (Send + Sync)
-- Alinhamento configurável por alocação
+- Configurable alignment per allocation
 
-### OS Abstraction
-- Cross-platform (Windows, Linux, macOS)
-- ThreadPool com work-stealing e shutdown gracioso
-- FileSystem com operações atômicas quando possível
-- High-precision timing (nanosegundos)
-- Network com non-blocking I/O opcional
-- Zero-cost abstractions (thin wrappers sobre std)
+### Expected Benchmarks
 
-## Benchmarks Esperados
+| Allocator  | Allocation | Deallocation     | Ideal Use Case        |
+| ---------- | ---------- | ---------------- | --------------------- |
+| Arena      | ~1ns       | N/A (bulk reset) | Per-frame temp data   |
+| Pool       | ~5ns       | ~5ns             | Fixed-size objects    |
+| Stack      | ~2ns       | ~2ns (LIFO)      | Hierarchical data     |
+| std::alloc | ~50-100ns  | ~50-100ns        | Variable-size objects |
 
-| Allocator  | Alocação  | Liberação            | Uso Ideal                  |
-| ---------- | --------- | -------------------- | -------------------------- |
-| Arena      | ~1ns      | N/A (reset em massa) | Dados temporários de frame |
-| Pool       | ~5ns      | ~5ns                 | Objetos de tamanho fixo    |
-| Stack      | ~2ns      | ~2ns (LIFO)          | Processamento hierárquico  |
-| std::alloc | ~50-100ns | ~50-100ns            | Tamanhos variados          |
+## Roadmap
 
-## Estrutura do Projeto
+### Short Term (Current Focus)
+- [x] Math 3D library (Vec3, Mat4, Quat, Aabb)
+- [x] Memory allocators (Arena, Pool, Stack)
+- [x] GPU abstraction API (textures, buffers, pipelines, commands)
+- [x] Frame graph system (resource management)
+- [ ] Vulkan backend implementation
+- [ ] Shader compilation pipeline (GLSL → SPIR-V)
 
-```
-Kernel/
-├── src/
-│   ├── lib.rs              # Ponto de entrada da biblioteca
-│   ├── vec3.rs             # Vetores 3D
-│   ├── vec4.rs             # Vetores 4D
-│   ├── mat4.rs             # Matrizes 4x4
-│   ├── quat.rs             # Quaternions
-│   ├── aabb.rs             # Bounding Boxes
-│   ├── memory/
-│   │   ├── mod.rs          # Module exports
-│   │   ├── arena.rs        # Arena allocator
-│   │   ├── pool.rs         # Pool allocator
-│   │   ├── stack.rs        # Stack allocator
-│   │   └── manager.rs      # Memory manager & profiler
-│   ├── os/
-│   │   ├── mod.rs          # System info, environment, process, console
-│   │   ├── threading.rs    # ThreadPool, semaphore, barriers
-│   │   ├── filesystem.rs   # FileSystem, FileHandle, paths
-│   │   ├── clock.rs        # Timing, FPS, profiling
-│   │   └── network.rs      # TCP, UDP, HTTP client
-│   └── window/
-│       ├── mod.rs          # Window management, DisplayMode
-│       ├── events.rs       # Event loop, WindowEvent, KeyEvent, MouseEvent
-│       └── input.rs        # InputState, Key, KeyCode, MouseButton
-├── tests/
-│   └── memory_tests.rs     # Integration tests
-├── examples/
-│   └── window_app.rs       # Complete windowing application example
-├── Cargo.toml
-└── README.md
-```
+### Medium Term
+- [ ] Material system
+- [ ] Scene rendering with culling
+- [ ] Post-processing effects
+- [ ] Native window implementation (Win32/X11/Wayland/Cocoa)
+- [ ] SIMD optimizations for math
 
-## Dependências
+### Long Term
+- [ ] Physics integration
+- [ ] Audio system
+- [ ] Asset pipeline
+- [ ] Editor tools
+- [ ] Network replication
 
-```toml
-[dependencies]
-hostname = "0.4"  # Para Network::hostname()
+## Contributing
 
-# Apenas std lib para o resto!
-```
+We welcome contributions! Please see:
+- [CLA.md](CLA.md) - Contributor License Agreement
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Community standards
+- [SUPPORT.md](SUPPORT.md) - Support policy
 
-## Recursos
+### Development Workflow
 
-### Principais Características
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `cargo test --workspace`
+5. Run formatter: `cargo fmt --all`
+6. Run clippy: `cargo clippy --workspace -- -D warnings`
+7. Submit a pull request
 
-✅ **Math 3D completa** - Vetores, matrizes, quaternions, AABB
-✅ **Memory management** - Arena, Pool, Stack allocators com profiling
-✅ **Window System** - Janelas, fullscreen, eventos, input (teclado/mouse)
-✅ **OS Threading** - ThreadPool, sincronização avançada, task scheduler
-✅ **OS Filesystem** - Operações cross-platform, metadata, directory walker
-✅ **OS Timing** - High-precision clock, FPS counter, delta time, profiler
-✅ **OS Network** - TCP/UDP sockets, HTTP client simples
-✅ **OS System** - Info do sistema, processos, variáveis de ambiente, console
-✅ **97 testes passando** - Cobertura completa de funcionalidades
-✅ **Zero unsafe** (exceto em alocadores low-level)
-✅ **Thread-safe** - Send + Sync em todas as estruturas públicas
-✅ **Cross-platform** - Windows, Linux, macOS
-
-### Próximos Passos
-
-- [ ] Implementação nativa de janelas (Win32, X11, Wayland, Cocoa)
-- [ ] Context OpenGL/Vulkan para rendering
-- [ ] Gamepad/Controller input
-- [ ] Drag & drop de arquivos
-- [ ] Clipboard support
-- [ ] SIMD optimizations para math (Vec3, Mat4)
-- [ ] Async I/O para filesystem e network (Tokio integration)
-- [ ] File watching implementation (inotify/FSEvents)
-- [ ] GPU memory allocators
-- [ ] Benchmarks formais com Criterion
-- [ ] Documentação expandida com mais exemplos## Licença
+## License
 
 Dual-licensed under:
-- MIT License (LICENSE-MIT or http://opensource.org/licenses/MIT)
-- Apache License, Version 2.0 (LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0)
+- MIT License ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
 
-at your option.
+You may choose either license at your option.
 
-## Contribuição
+## Acknowledgments
 
-See [CLA.md](CLA.md) for contribution terms and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community standards.
+**Third-party dependencies:**
+- `hostname` crate (MIT) - Used in avila-math for network utilities
+
+**Design inspiration:**
+- Math: glam, cgmath, nalgebra
+- Memory: bumpalo, typed-arena
+- Graphics: wgpu, ash, gfx-hal, bgfx
+- Frame Graph: Frostbite FrameGraph (EA), RenderGraph (Unity)
 
 ---
 
-**Avila Math** - Part of the Avila project
+**Avila** - Infrastructure Framework for Game Development
+
+Repository: https://github.com/avilaops/Kernel

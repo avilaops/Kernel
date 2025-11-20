@@ -1,0 +1,33 @@
+[package]
+name = "avila-renderer"
+version = "0.1.0"
+edition = "2021"
+authors = ["Avila Contributors"]
+license = "MIT OR Apache-2.0"
+description = "High-performance rendering engine with modern graphics API abstraction"
+repository = "https://github.com/avilaops/Kernel"
+homepage = "https://github.com/avilaops/Kernel"
+readme = "README.md"
+keywords = ["graphics", "rendering", "gamedev", "vulkan", "gpu"]
+categories = ["game-development", "graphics", "rendering"]
+
+[lib]
+name = "avila_renderer"
+path = "src/lib.rs"
+
+[dependencies]
+# No dependencies yet - pure Rust abstraction
+# When implementing backends, add:
+# ash = { version = "0.38", optional = true }  # Vulkan
+# glow = { version = "0.13", optional = true } # OpenGL
+# wgpu = { version = "0.19", optional = true } # WebGPU
+
+[dev-dependencies]
+
+[features]
+default = []
+# Future backend features:
+# vulkan = ["ash", "gpu-allocator"]
+# opengl = ["glow"]
+# dx12 = ["windows", "d3d12"]
+# metal = ["metal-rs"]

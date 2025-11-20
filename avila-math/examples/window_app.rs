@@ -3,13 +3,13 @@
 //! Demonstra como criar uma aplicação com game loop, processamento de eventos,
 //! input handling e integração com os outros sistemas da biblioteca.
 
-use kernel_math::window::{
-    Window, WindowConfig, EventLoop, Event, WindowEvent,
-    KeyEvent, MouseEvent, InputState, Key, KeyCode, MouseButton,
+use avila_math::memory::Arena;
+use avila_math::os::{DeltaTime, FpsCounter};
+use avila_math::window::{
+    Event, EventLoop, InputState, Key, KeyCode, KeyEvent, MouseButton, MouseEvent, Window,
+    WindowConfig, WindowEvent,
 };
-use kernel_math::os::{FpsCounter, DeltaTime};
-use kernel_math::memory::Arena;
-use kernel_math::Vec3;
+use avila_math::Vec3;
 
 /// Aplicação exemplo
 pub struct Application {
@@ -142,12 +142,16 @@ impl Application {
 
     fn handle_mouse_event(&mut self, event: MouseEvent) {
         match event {
-            MouseEvent::ButtonPressed { button, position, .. } => {
+            MouseEvent::ButtonPressed {
+                button, position, ..
+            } => {
                 self.input_state.press_button(button);
                 self.input_state.set_cursor_position(position.0, position.1);
                 println!("Mouse button {:?} pressed at {:?}", button, position);
             }
-            MouseEvent::ButtonReleased { button, position, .. } => {
+            MouseEvent::ButtonReleased {
+                button, position, ..
+            } => {
                 self.input_state.release_button(button);
                 self.input_state.set_cursor_position(position.0, position.1);
             }
@@ -188,7 +192,7 @@ impl Application {
             let speed = if self.input_state.modifiers().has_shift() {
                 10.0 // Sprint
             } else {
-                5.0  // Walk
+                5.0 // Walk
             };
 
             let velocity = movement * speed * dt;
@@ -239,7 +243,10 @@ mod tests {
         let mut app = Application::new("Test", 800, 600).unwrap();
 
         // Simula pressionar tecla W
-        let key_event = KeyEvent::new(Key::Code(KeyCode::W), kernel_math::window::KeyState::Pressed);
+        let key_event = KeyEvent::new(
+            Key::Code(KeyCode::W),
+            kernel_math::window::KeyState::Pressed,
+        );
         app.handle_keyboard_event(key_event);
 
         assert!(app.input_state.is_keycode_pressed(KeyCode::W));
@@ -248,8 +255,8 @@ mod tests {
 
 #[cfg(not(test))]
 fn _example_main() {
-    let mut app = Application::new("Avila Window Example", 1280, 720)
-        .expect("Failed to create application");
+    let mut app =
+        Application::new("Avila Window Example", 1280, 720).expect("Failed to create application");
 
     println!("Application started!");
     println!("Controls:");

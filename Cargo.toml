@@ -1,22 +1,27 @@
-[package]
-name = "avila-math"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+resolver = "2"
+members = ["avila-math", "avila-renderer"]
+
+[workspace.package]
 authors = ["Avila Contributors"]
 license = "MIT OR Apache-2.0"
-description = "High-performance math library with 3D vectors, matrices, quaternions, memory management, OS abstractions, and windowing system for game development and graphics applications"
+edition = "2021"
 repository = "https://github.com/avilaops/Kernel"
 homepage = "https://github.com/avilaops/Kernel"
-documentation = "https://docs.rs/avila-math"
-readme = "README.md"
-keywords = ["math", "gamedev", "graphics", "memory", "window"]
-categories = ["game-development", "graphics", "mathematics", "memory-management"]
 
-[lib]
-name = "avila_math"
-path = "src/lib.rs"
+[workspace.dependencies]
+# Shared dependencies across workspace
+# avila-math = { path = "avila-math", version = "0.1.0" }
 
-[dependencies]
-hostname = "0.4"
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
 
-[dev-dependencies]
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.test]
+opt-level = 0
